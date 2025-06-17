@@ -8,7 +8,7 @@ from typing import List, Dict
 import csv
 import openpyxl
 from openpyxl import Workbook
-from datetime import datetime
+
 
 class UserRole(Enum):
     ADMIN = "admin"
@@ -45,7 +45,6 @@ class Notification:
         self.is_read = False
 
     def send(self, users: list):
-        """Send this notification to the recipient's notification list"""
         recipient = next((u for u in users if u._id == self.recipient_id), None)
         if recipient:
             recipient.add_notification(self)
@@ -55,7 +54,7 @@ class Notification:
     def mark_as_read(self):
         self.is_read = True
 
-    def __str__(self) -> str:  # Remove users parameter
+    def __str__(self) -> str:  
         status = "Read" if self.is_read else "Unread"
         return (f"ID: {self.id} | Status: {status} | {self.created_at[:10]}\n"
                 f"Message: {self.message}")
@@ -255,7 +254,7 @@ class Parent(User):
         else:
             print("Child not found.")
 
-    def send_to_parent(self, student_id: int, message: str, users: list):  # Fixed typo in method name
+    def send_to_parent(self, student_id: int, message: str, users: list): 
         student = next((u for u in users if isinstance(u, Student) and u._id == student_id), None)  
         if not student:
             print("Student not found")
@@ -282,11 +281,10 @@ class Schedule:
         self.schedule_id = schedule_id
         self.class_id = class_id
         self.day = day
-        self.lessons = {}  # Format: {time: {'subject': str, 'teacher_id': int}}
+        self.lessons = {} 
 
     def add_lesson(self, time: str, subject: str, teacher_id: int, users: list) -> bool:
         """Add a lesson to the schedule"""
-        # Check if teacher exists
         teacher = next((t for t in users if isinstance(t, Teacher) and t._id == teacher_id), None)
         if not teacher:
             print("Teacher not found.")
@@ -335,7 +333,7 @@ class Admin(User):
         super().__init__(full_name, email, password, UserRole.ADMIN)
         self.permissions = []
         self.users = {}
-        self.schedules = {}  # Format: {class_id: {day: Schedule}}
+        self.schedules = {} 
     def add_user(self, user: User, users: list) -> bool:
         if user._id in self.users:
             return False
@@ -714,7 +712,7 @@ def main():
                     
                 elif action == '2':
                     uid = int(input("Enter user id to remove: "))
-                    if admin_users and admin_users[0].remove_user(uid):
+                    if admin_users and admin_users[0].remove_user(uid, users):
                         print("User removed.")
                     else:
                         print("User not found.")
